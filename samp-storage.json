@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enterstorage": {
+            "type": "string",
+            "defaultValue": "storage4542",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "skusize": {
+            "type": "string",
+            "defaultValue": "standard_LRS",
+            "allowedValues": [
+                "standard_LRS",
+                "Premium_LRS"
+                
+            ],
+            "metadata": {
+                "description": "description"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('enterstorage')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "tags": {
+                "displayName": "storageaccount1"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku":{
+                    "name":"[parameters('skusize')]"
+            }
+        }
+    ],
+    "outputs": {
+        "storageEndpoint": {
+            "type": "object",
+            "value": "[reference(parameters('enterstorage')).primaryEndpoints]"
+        }
+
+    }
+}
+
+
+
+// this will is output of above template
+// {
+//     "dfs":"https://cutset.dfs.core.windows.net/",
+// "web":"https://cutset.z30.web.core.windows.net/",
+// "blob":"https://cutset.blob.core.windows.net/",
+// "queue":"https://cutset.queue.core.windows.net/",
+// "table":"https://cutset.table.core.windows.net/",
+// "file":"https://cutset.file.core.windows.net/"
+// }

@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "uniqueDnsName": {
+            "type": "String",
+            "metadata": {
+                "description": "Relative DNS name for the traffic manager profile, must be globally unique."
+            }
+        },
+        "trafficmangername": {
+            "type": "String",
+            "metadata": {
+                "description": "description"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/trafficManagerProfiles",
+            "apiVersion": "2018-08-01",
+            "name": "[parameters('trafficmangername')]",
+            "location": "global",
+            "properties": {
+                "profileStatus": "Enabled",
+                "trafficRoutingMethod": "priority",
+                "dnsConfig": {
+                    "relativeName": "[parameters('uniqueDnsName')]",
+                    "ttl": 30
+                },
+                "monitorConfig": {
+                    "protocol": "HTTPS",
+                    "port": 443,
+                    "path": "/",
+                    "expectedStatusCodeRanges": [
+                        {
+                            "min": 200,
+                            "max": 202
+                        },
+                        {
+                            "min": 301,
+                            "max": 302
+                        }
+                    ]
+                },
+                "endpoints": [
+                    {
+                        "type": "Microsoft.Network/TrafficManagerProfiles/ExternalEndpoints",
+                        "name": "endpoint1",
+                        "properties": {
+                            "target": "www.microsoft.com",
+                            "endpointStatus": "Enabled",
+                            "endpointLocation": "northeurope"
+                        }
+                    },
+                    {
+                        "type": "Microsoft.Network/TrafficManagerProfiles/ExternalEndpoints",
+                        "name": "endpoint2",
+                        "properties": {
+                            "target": "docs.microsoft.com",
+                            "endpointStatus": "Enabled",
+                            "endpointLocation": "southcentralus"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
